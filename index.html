@@ -411,48 +411,293 @@
       margin: 8px 0;
     }
 
-    /* Print styles for PDF Report */
-    @media print {
-      header, .tabs-bar, .canvas-toolbar, .fab-add, .session-badge, .header-actions, .modal-overlay {
-        display: none !important;
-      }
-      body, .main-container {
-        height: auto !important;
-        overflow: visible !important;
-        background: #fff !important;
-      }
-      .tab-content {
-        display: block !important;
-        height: auto !important;
-        overflow: visible !important;
-        page-break-after: always;
-      }
-      #canvas-tab {
-        height: 600px !important;
-        page-break-inside: avoid;
-      }
-      .card {
-        border: 1px solid #ccc !important;
-        box-shadow: none !important;
-        break-inside: avoid;
-        margin-bottom: 16px !important;
-      }
-      .print-header {
-        display: block !important;
-        border-bottom: 2px solid #1E293B;
-        padding-bottom: 12px;
-        margin-bottom: 20px;
-      }
+    /* ============================================================
+       PRINT & PDF STYLES - DEDICATED REPORT TEMPLATE
+       ============================================================ */
+    .print-only {
+      display: none !important;
     }
 
-    .print-header {
-      display: none;
+    @media print {
+      @page {
+        size: letter portrait;
+        margin: 10mm 12mm 10mm 12mm;
+      }
+
+      /* Hide interactive web components */
+      header, .tabs-bar, .canvas-toolbar, .fab-add, .session-badge, .header-actions, .modal-overlay, .tab-content, .main-container {
+        display: none !important;
+      }
+
+      body {
+        background: #FFFFFF !important;
+        color: #0F172A !important;
+        height: auto !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+
+      .print-page {
+        page-break-after: always;
+        break-after: page;
+        min-height: 96vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+      }
+
+      .print-page:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .print-header-banner {
+        background-color: #1E293B !important;
+        color: #FFFFFF !important;
+        padding: 8px 14px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .print-header-banner h2 {
+        font-size: 14pt;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0 0 2px 0;
+        color: #FFFFFF !important;
+      }
+
+      .print-header-banner h3 {
+        font-size: 11pt;
+        font-weight: 700;
+        margin: 0;
+        color: #FFFFFF !important;
+      }
+
+      .print-confidential-tag {
+        font-size: 7pt;
+        color: #94A3B8 !important;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .print-header-right {
+        text-align: right;
+      }
+
+      .print-facility-name {
+        font-size: 9pt;
+        font-weight: 600;
+        color: #F8FAFC !important;
+      }
+
+      .print-date {
+        font-size: 7.5pt;
+        color: #94A3B8 !important;
+      }
+
+      /* Demographics box on Page 1 */
+      .print-demographics-card {
+        background: #F8FAFC !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+      }
+
+      .print-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        row-gap: 5px;
+        column-gap: 12px;
+        font-size: 8pt;
+      }
+
+      .print-label {
+        color: #0284C7 !important;
+        font-weight: 700;
+      }
+
+      /* Diagram container on Page 1 */
+      .print-canvas-wrapper {
+        border: 1px solid #CBD5E1;
+        border-radius: 6px;
+        background: #FAFAFA !important;
+        padding: 6px;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+
+      .print-diagram-title {
+        font-size: 7.5pt;
+        font-weight: 700;
+        color: #475569 !important;
+        text-align: left;
+        margin-bottom: 4px;
+        padding-left: 4px;
+        letter-spacing: 0.5px;
+      }
+
+      .print-canvas-image {
+        width: 100%;
+        max-height: 400px;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+        background: #FFFFFF;
+      }
+
+      /* Relational key - PLACED DIRECTLY BELOW DIAGRAM (NO OVERLAP) */
+      .print-legend-box {
+        background: #F1F5F9 !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-bottom: 6px;
+      }
+
+      .print-legend-title {
+        font-size: 7.5pt;
+        font-weight: 700;
+        color: #1E293B !important;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+      }
+
+      .print-legend-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 4px;
+        column-gap: 8px;
+        font-size: 7.5pt;
+      }
+
+      .print-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #334155 !important;
+      }
+
+      .print-leg-line {
+        display: inline-block;
+        width: 24px;
+        height: 3px;
+        border-radius: 2px;
+      }
+
+      /* Systemic Metrics Row */
+      .print-metrics-bar {
+        background: #E2E8F0 !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px;
+        padding: 5px 12px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 8pt;
+        color: #1E293B !important;
+        margin-bottom: 4px;
+      }
+
+      /* Page 2 Cards */
+      .print-card {
+        background: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+      }
+
+      .print-section-header {
+        font-size: 8pt;
+        font-weight: 700;
+        color: #1E293B !important;
+        margin-bottom: 4px;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 2px;
+        letter-spacing: 0.5px;
+      }
+
+      .print-narrative-text {
+        font-size: 8pt;
+        line-height: 1.45;
+        color: #334155 !important;
+        white-space: pre-wrap;
+      }
+
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8pt;
+      }
+
+      .print-table th, .print-table td {
+        padding: 4px 8px;
+        border-bottom: 1px solid #E2E8F0;
+        text-align: left;
+      }
+
+      .print-table th {
+        background: #F1F5F9 !important;
+        color: #475569 !important;
+        font-weight: 600;
+      }
+
+      /* Signature box */
+      .print-signature-box {
+        background: #F8FAFC !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-top: 4px;
+      }
+
+      .print-sig-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 22px;
+      }
+
+      .print-sig-col {
+        width: 45%;
+      }
+
+      .print-sig-line {
+        border-top: 1px solid #64748B;
+        margin-bottom: 4px;
+      }
+
+      .print-sig-label {
+        font-size: 7pt;
+        color: #64748B !important;
+      }
+
+      .print-page-footer {
+        font-size: 7pt;
+        color: #94A3B8 !important;
+        text-align: center;
+        border-top: 1px solid #E2E8F0;
+        padding-top: 4px;
+        margin-top: auto;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
+  <!-- Top Navigation Header (Screen View) -->
   <header>
     <div class="brand">
       <span class="material-symbols-outlined" style="font-size: 28px; color: #38BDF8;">hub</span>
@@ -487,12 +732,6 @@
       <button class="tab-btn" onclick="switchTab('analytics-tab', this)">
         <span class="material-symbols-outlined">analytics</span> Systemic Analytics
       </button>
-    </div>
-
-    <!-- Print Only Cover Header -->
-    <div class="print-header" id="printHeader">
-      <h2 style="font-size: 20pt; color: #1E293B; margin-bottom: 4px;">CLINICAL ECOMAP REPORT</h2>
-      <div style="font-size: 10pt; color: #64748B;" id="printMetaLine">Beacon Behavioral Health Center • Case Assessment</div>
     </div>
 
     <!-- Tab 1: Interactive Canvas -->
@@ -655,6 +894,150 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       DEDICATED PDF PRINT REPORT (RENDERED DURING PRINT / SAVE PDF)
+       ============================================================ -->
+  <div id="printReport" class="print-only">
+    <!-- PAGE 1: Header, Client Details, Diagram, Legend, Metrics -->
+    <div class="print-page">
+      <div>
+        <div class="print-header-banner">
+          <div class="print-header-left">
+            <h2>CLINICAL ECOMAP REPORT</h2>
+            <div class="print-confidential-tag">CONFIDENTIAL ASSESSMENT • HEALTHCARE & CASE FILE</div>
+          </div>
+          <div class="print-header-right">
+            <div class="print-facility-name" id="printFacilityName">Beacon Behavioral Health Center</div>
+            <div class="print-date" id="printDate">Date: 2026-11-12</div>
+          </div>
+        </div>
+
+        <!-- Client & Case Details Box at Top of Page 1 -->
+        <div class="print-demographics-card">
+          <div class="print-grid-3">
+            <div><span class="print-label">Client Name:</span> <strong id="printClientName">Sarah Jenkins</strong></div>
+            <div><span class="print-label">Case ID:</span> <strong id="printCaseId">CS-2026-8891</strong></div>
+            <div><span class="print-label">Assessment Title:</span> <span id="printAssessmentTitle">Systemic Assessment</span></div>
+            <div><span class="print-label">Clinician / Therapist:</span> <span id="printTherapist">Dr. Alex Taylor, LCSW</span></div>
+            <div><span class="print-label">Clinical Supervisor:</span> <span id="printSupervisor">Dr. Morgan Reed, PsyD</span></div>
+            <div><span class="print-label">Household Size:</span> <span id="printHouseholdCount">3 Member(s)</span></div>
+          </div>
+        </div>
+
+        <!-- Ecomap Diagram Box -->
+        <div class="print-canvas-wrapper">
+          <div class="print-diagram-title">ECOMAP ECOLOGICAL SYSTEM DIAGRAM</div>
+          <img id="printCanvasImg" class="print-canvas-image" alt="Ecomap Visual Canvas" />
+        </div>
+
+        <!-- Relational Key - PLACED DIRECTLY BELOW DIAGRAM (NO OVERLAP) -->
+        <div class="print-legend-box">
+          <div class="print-legend-title">RELATIONAL DYNAMICS KEY</div>
+          <div class="print-legend-grid">
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #10B981;"></span>
+              <span>Strong / Nurturing (Solid)</span>
+            </div>
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #EF4444; border-top: 2px dashed #EF4444; height: 0;"></span>
+              <span>Stressful / Conflict (Jagged)</span>
+            </div>
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #F59E0B; border-top: 2px dashed #F59E0B; height: 0;"></span>
+              <span>Tenuous / Weak (Dashed)</span>
+            </div>
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #06B6D4;"></span>
+              <span>Energy Giving (Inflow)</span>
+            </div>
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #F97316; border-top: 2px dashed #F97316; height: 0;"></span>
+              <span>Energy Draining (Outflow)</span>
+            </div>
+            <div class="print-legend-item">
+              <span class="print-leg-line" style="background: #0284C7;"></span>
+              <span>Reciprocal / Directional Arrows</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Systemic Metrics Row at bottom of Page 1 -->
+        <div class="print-metrics-bar">
+          <div><strong>Total Domains:</strong> <span id="printMetricTotal">5</span></div>
+          <div><strong>Nurturing Supports:</strong> <span id="printMetricNurturing" style="color: #10B981; font-weight: bold;">3</span></div>
+          <div><strong>Stress Vectors:</strong> <span id="printMetricStressful" style="color: #EF4444; font-weight: bold;">1</span></div>
+          <div><strong>Tenuous Links:</strong> <span id="printMetricTenuous" style="color: #F59E0B; font-weight: bold;">1</span></div>
+        </div>
+      </div>
+
+      <div class="print-page-footer">EcoMap Clinical System • Confidential Medical Assessment • Page 1 of 2</div>
+    </div>
+
+    <!-- PAGE 2: Household Table, Clinical Narrative, Sign-off -->
+    <div class="print-page">
+      <div>
+        <div class="print-header-banner" style="padding: 6px 14px;">
+          <div class="print-header-left">
+            <h3>CLINICAL FORMULATION & SYSTEMIC DOCUMENTATION</h3>
+          </div>
+          <div class="print-header-right">
+            <div style="font-size: 8pt; color: #E2E8F0;" id="printPage2CaseClient">Case ID: CS-2026-8891 | Client: Sarah Jenkins</div>
+          </div>
+        </div>
+
+        <!-- Household Members Section -->
+        <div class="print-card">
+          <div class="print-section-header">HOUSEHOLD SYSTEM COMPOSITION</div>
+          <table class="print-table" id="printHouseholdTable">
+            <thead>
+              <tr>
+                <th>Member Name</th>
+                <th>Relationship to Client</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody id="printHouseholdTbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Clinical Formulations -->
+        <div class="print-card">
+          <div class="print-section-header">PRESENTING PROBLEM & SOCIAL ECOLOGY</div>
+          <div class="print-narrative-text" id="printPresentingContext"></div>
+        </div>
+
+        <div class="print-card">
+          <div class="print-section-header">DIAGNOSTIC ASSESSMENT & SYSTEMIC DYNAMICS</div>
+          <div class="print-narrative-text" id="printClinicalImpressions"></div>
+        </div>
+
+        <div class="print-card">
+          <div class="print-section-header">RECOMMENDED CLINICAL INTERVENTIONS & ACTION PLAN</div>
+          <div class="print-narrative-text" id="printRecommendedInterventions"></div>
+        </div>
+
+        <!-- Sign-off Block -->
+        <div class="print-signature-box">
+          <div class="print-section-header" style="margin-bottom: 18px;">CLINICAL SIGN-OFF & SUPERVISORY REVIEW</div>
+          <div class="print-sig-row">
+            <div class="print-sig-col">
+              <div class="print-sig-line"></div>
+              <div class="print-sig-label">Primary Clinician Signature & Date</div>
+            </div>
+            <div class="print-sig-col">
+              <div class="print-sig-line"></div>
+              <div class="print-sig-label">Clinical Supervisor Signature & Date</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="print-page-footer">EcoMap Clinical System • Confidential Medical Assessment • Page 2 of 2</div>
+    </div>
+  </div>
+
   <!-- Add / Edit Node Modal -->
   <div id="nodeModal" class="modal-overlay">
     <div class="modal">
@@ -769,6 +1152,8 @@
       renderHouseholdTable();
       renderCanvas();
       updateAnalytics();
+
+      window.addEventListener('beforeprint', preparePrintReport);
     }
 
     function resizeCanvas() {
@@ -806,7 +1191,7 @@
       ecomap.nodes.forEach(node => {
         const nx = node.relativeX * canvas.width;
         const ny = node.relativeY * canvas.height;
-        drawRelationalConnection(centerX, centerY, nx, ny, centerRadius, nodeRadius, node.type, node.flow);
+        drawRelationalConnection(ctx, centerX, centerY, nx, ny, centerRadius, nodeRadius, node.type, node.flow);
       });
 
       // Draw Central Client Household Node
@@ -854,18 +1239,18 @@
         ctx.fillText(displayTitle, nx, ny + 4);
 
         // Star Impact Indicators
-        drawImpactStars(nx, ny + nodeRadius + 14, node.impact);
+        drawImpactStars(ctx, nx, ny + nodeRadius + 14, node.impact);
       });
 
       ctx.restore();
     }
 
-    function drawImpactStars(x, y, count) {
-      ctx.fillStyle = '#F59E0B';
-      ctx.font = '10px sans-serif';
-      ctx.textAlign = 'center';
+    function drawImpactStars(targetCtx, x, y, count) {
+      targetCtx.fillStyle = '#F59E0B';
+      targetCtx.font = '10px sans-serif';
+      targetCtx.textAlign = 'center';
       const stars = '★'.repeat(Math.min(5, Math.max(1, count)));
-      ctx.fillText(stars, x, y);
+      targetCtx.fillText(stars, x, y);
     }
 
     function getNodeColor(cat) {
@@ -882,7 +1267,7 @@
       }
     }
 
-    function drawRelationalConnection(x1, y1, x2, y2, r1, r2, type, flow) {
+    function drawRelationalConnection(targetCtx, x1, y1, x2, y2, r1, r2, type, flow) {
       const dx = x2 - x1;
       const dy = y2 - y1;
       const dist = Math.hypot(dx, dy);
@@ -893,16 +1278,16 @@
       const ex = x2 - (dx * r2 / dist);
       const ey = y2 - (dy * r2 / dist);
 
-      ctx.save();
+      targetCtx.save();
       let lineColor = '#10B981';
       let lineWidth = 4;
 
       if (type === 'STRESSFUL') {
         lineColor = '#EF4444';
         lineWidth = 3;
-        ctx.strokeStyle = lineColor;
-        ctx.lineWidth = lineWidth;
-        ctx.beginPath();
+        targetCtx.strokeStyle = lineColor;
+        targetCtx.lineWidth = lineWidth;
+        targetCtx.beginPath();
         // Jagged Zig-Zag line
         const steps = 8;
         const stepX = (ex - sx) / steps;
@@ -910,60 +1295,60 @@
         const perpX = -(ey - sy) / dist * 10;
         const perpY = (ex - sx) / dist * 10;
 
-        ctx.moveTo(sx, sy);
+        targetCtx.moveTo(sx, sy);
         for (let i = 1; i <= steps; i++) {
           const side = (i % 2 === 1) ? 1 : -1;
           const px = sx + stepX * i + (i === steps ? 0 : perpX * side);
           const py = sy + stepY * i + (i === steps ? 0 : perpY * side);
-          ctx.lineTo(px, py);
+          targetCtx.lineTo(px, py);
         }
-        ctx.stroke();
+        targetCtx.stroke();
       } else if (type === 'TENUOUS' || type === 'DRAINING') {
         lineColor = (type === 'DRAINING') ? '#F97316' : '#F59E0B';
         lineWidth = 3;
-        ctx.strokeStyle = lineColor;
-        ctx.lineWidth = lineWidth;
-        ctx.setLineDash([8, 6]);
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
+        targetCtx.strokeStyle = lineColor;
+        targetCtx.lineWidth = lineWidth;
+        targetCtx.setLineDash([8, 6]);
+        targetCtx.beginPath();
+        targetCtx.moveTo(sx, sy);
+        targetCtx.lineTo(ex, ey);
+        targetCtx.stroke();
       } else {
         // Strong / Giving / Reciprocal
         lineColor = (type === 'GIVING') ? '#06B6D4' : '#10B981';
         lineWidth = 4;
-        ctx.strokeStyle = lineColor;
-        ctx.lineWidth = lineWidth;
-        ctx.setLineDash([]);
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
+        targetCtx.strokeStyle = lineColor;
+        targetCtx.lineWidth = lineWidth;
+        targetCtx.setLineDash([]);
+        targetCtx.beginPath();
+        targetCtx.moveTo(sx, sy);
+        targetCtx.lineTo(ex, ey);
+        targetCtx.stroke();
       }
 
       // Draw Arrowheads
       const angle = Math.atan2(dy, dx);
       if (flow === 'TOWARDS_CLIENT' || flow === 'BIDIRECTIONAL') {
-        drawArrowHead(sx, sy, angle + Math.PI, lineColor);
+        drawArrowHead(targetCtx, sx, sy, angle + Math.PI, lineColor);
       }
       if (flow === 'AWAY_FROM_CLIENT' || flow === 'BIDIRECTIONAL') {
-        drawArrowHead(ex, ey, angle, lineColor);
+        drawArrowHead(targetCtx, ex, ey, angle, lineColor);
       }
 
-      ctx.restore();
+      targetCtx.restore();
     }
 
-    function drawArrowHead(x, y, angle, color) {
+    function drawArrowHead(targetCtx, x, y, angle, color) {
       const size = 12;
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - size * Math.cos(angle - Math.PI / 6), y - size * Math.sin(angle - Math.PI / 6));
-      ctx.lineTo(x - size * Math.cos(angle + Math.PI / 6), y - size * Math.sin(angle + Math.PI / 6));
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+      targetCtx.save();
+      targetCtx.fillStyle = color;
+      targetCtx.beginPath();
+      targetCtx.moveTo(x, y);
+      targetCtx.lineTo(x - size * Math.cos(angle - Math.PI / 6), y - size * Math.sin(angle - Math.PI / 6));
+      targetCtx.lineTo(x - size * Math.cos(angle + Math.PI / 6), y - size * Math.sin(angle + Math.PI / 6));
+      targetCtx.closePath();
+      targetCtx.fill();
+      targetCtx.restore();
     }
 
     // Pointer Event Handling (Panning & Node Dragging)
@@ -1201,21 +1586,31 @@
     }
 
     function updateMapInfo() {
-      ecomap.clientName = document.getElementById('clientName').value;
-      ecomap.caseId = document.getElementById('caseId').value;
-      ecomap.title = document.getElementById('mapTitle').value;
-      ecomap.therapistName = document.getElementById('therapistName').value;
-      ecomap.facilityName = document.getElementById('facilityName').value;
-      ecomap.supervisorName = document.getElementById('supervisorName').value;
-      ecomap.presentingContext = document.getElementById('presentingContext').value;
-      ecomap.clinicalImpressions = document.getElementById('clinicalImpressions').value;
-      ecomap.recommendedInterventions = document.getElementById('recommendedInterventions').value;
+      const cName = document.getElementById('clientName');
+      if (cName) ecomap.clientName = cName.value;
+      const cId = document.getElementById('caseId');
+      if (cId) ecomap.caseId = cId.value;
+      const mTitle = document.getElementById('mapTitle');
+      if (mTitle) ecomap.title = mTitle.value;
+      const tName = document.getElementById('therapistName');
+      if (tName) ecomap.therapistName = tName.value;
+      const fName = document.getElementById('facilityName');
+      if (fName) ecomap.facilityName = fName.value;
+      const sName = document.getElementById('supervisorName');
+      if (sName) ecomap.supervisorName = sName.value;
+      const pContext = document.getElementById('presentingContext');
+      if (pContext) ecomap.presentingContext = pContext.value;
+      const cImp = document.getElementById('clinicalImpressions');
+      if (cImp) ecomap.clinicalImpressions = cImp.value;
+      const rInterv = document.getElementById('recommendedInterventions');
+      if (rInterv) ecomap.recommendedInterventions = rInterv.value;
       renderCanvas();
     }
 
     // Household Table
     function renderHouseholdTable() {
       const tbody = document.getElementById('householdListBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
       ecomap.householdMembers.forEach((member, index) => {
         const tr = document.createElement('tr');
@@ -1257,16 +1652,24 @@
       const stressful = ecomap.nodes.filter(n => n.type === 'STRESSFUL' || n.type === 'DRAINING').length;
       const tenuous = ecomap.nodes.filter(n => n.type === 'TENUOUS').length;
 
-      document.getElementById('totalDomainsCount').innerText = total;
-      document.getElementById('nurturingCount').innerText = nurturing;
-      document.getElementById('stressfulCount').innerText = stressful;
-      document.getElementById('tenuousCount').innerText = tenuous;
+      const totalEl = document.getElementById('totalDomainsCount');
+      if (totalEl) totalEl.innerText = total;
+      const nutEl = document.getElementById('nurturingCount');
+      if (nutEl) nutEl.innerText = nurturing;
+      const strEl = document.getElementById('stressfulCount');
+      if (strEl) strEl.innerText = stressful;
+      const tenEl = document.getElementById('tenuousCount');
+      if (tenEl) tenEl.innerText = tenuous;
 
       const nutPercent = total > 0 ? (nurturing / total) * 100 : 50;
-      document.getElementById('nurturingBar').style.width = nutPercent + '%';
-      document.getElementById('stressfulBar').style.width = (100 - nutPercent) + '%';
-      document.getElementById('systemicRatioText').innerText = 
-        `Social ecology is ${Math.round(nutPercent)}% Nurturing/Supportive vs ${Math.round(100 - nutPercent)}% Stressful/Depleting.`;
+      const nutBar = document.getElementById('nurturingBar');
+      if (nutBar) nutBar.style.width = nutPercent + '%';
+      const strBar = document.getElementById('stressfulBar');
+      if (strBar) strBar.style.width = (100 - nutPercent) + '%';
+      const ratioTxt = document.getElementById('systemicRatioText');
+      if (ratioTxt) {
+        ratioTxt.innerText = `Social ecology is ${Math.round(nutPercent)}% Nurturing/Supportive vs ${Math.round(100 - nutPercent)}% Stressful/Depleting.`;
+      }
     }
 
     function resetSessionData() {
@@ -1283,10 +1686,151 @@
       }
     }
 
+    /* ============================================================
+       PRINT & PDF GENERATION LOGIC
+       ============================================================ */
+    function renderPrintDiagram() {
+      // Off-screen canvas ensures clean, un-panned, un-zoomed high-DPI diagram
+      const pCanvas = document.createElement('canvas');
+      const pWidth = 1000;
+      const pHeight = 560;
+      pCanvas.width = pWidth;
+      pCanvas.height = pHeight;
+      const pCtx = pCanvas.getContext('2d');
+
+      // Clean white background
+      pCtx.fillStyle = '#FFFFFF';
+      pCtx.fillRect(0, 0, pWidth, pHeight);
+
+      // Subtle dotted grid
+      pCtx.fillStyle = '#E2E8F0';
+      for (let x = 0; x < pWidth; x += 36) {
+        for (let y = 0; y < pHeight; y += 36) {
+          pCtx.beginPath();
+          pCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+          pCtx.fill();
+        }
+      }
+
+      const centerX = pWidth * 0.5;
+      const centerY = pHeight * 0.5;
+      const centralRadius = 58;
+      const nodeRadius = 36;
+
+      // Draw Relational Connections
+      ecomap.nodes.forEach(node => {
+        const nx = node.relativeX * pWidth;
+        const ny = node.relativeY * pHeight;
+        drawRelationalConnection(pCtx, centerX, centerY, nx, ny, centralRadius, nodeRadius, node.type, node.flow);
+      });
+
+      // Central Household Node
+      pCtx.beginPath();
+      pCtx.arc(centerX, centerY, centralRadius, 0, Math.PI * 2);
+      pCtx.fillStyle = '#1E293B';
+      pCtx.fill();
+      pCtx.lineWidth = 4;
+      pCtx.strokeStyle = '#0284C7';
+      pCtx.stroke();
+
+      pCtx.fillStyle = '#FFFFFF';
+      pCtx.font = 'bold 15px Roboto, sans-serif';
+      pCtx.textAlign = 'center';
+      const firstName = ecomap.clientName.trim().split(' ')[0] || 'Client';
+      pCtx.fillText(firstName, centerX, centerY - 8);
+
+      pCtx.font = '10px Roboto, sans-serif';
+      pCtx.fillStyle = '#38BDF8';
+      pCtx.fillText('Household System', centerX, centerY + 8);
+      pCtx.fillStyle = '#94A3B8';
+      pCtx.fillText(`${ecomap.householdMembers.length} Member(s)`, centerX, centerY + 22);
+
+      // Domain Nodes
+      ecomap.nodes.forEach(node => {
+        const nx = node.relativeX * pWidth;
+        const ny = node.relativeY * pHeight;
+
+        pCtx.beginPath();
+        pCtx.arc(nx, ny, nodeRadius, 0, Math.PI * 2);
+        pCtx.fillStyle = getNodeColor(node.category);
+        pCtx.fill();
+
+        pCtx.lineWidth = 2.5;
+        pCtx.strokeStyle = '#FFFFFF';
+        pCtx.stroke();
+
+        pCtx.fillStyle = '#FFFFFF';
+        pCtx.font = 'bold 12px Roboto, sans-serif';
+        pCtx.textAlign = 'center';
+        const displayTitle = node.title.length > 14 ? node.title.substring(0, 13) + '..' : node.title;
+        pCtx.fillText(displayTitle, nx, ny + 4);
+
+        drawImpactStars(pCtx, nx, ny + nodeRadius + 14, node.impact);
+      });
+
+      const printImg = document.getElementById('printCanvasImg');
+      if (printImg) {
+        printImg.src = pCanvas.toDataURL('image/png');
+      }
+    }
+
+    function syncPrintData() {
+      // Page 1 Header & Demographics (moved to Page 1 to maximize space efficiency)
+      document.getElementById('printFacilityName').innerText = ecomap.facilityName || 'Clinical Behavioral Health Center';
+      document.getElementById('printDate').innerText = 'Date: ' + new Date().toLocaleDateString();
+      document.getElementById('printClientName').innerText = ecomap.clientName || 'N/A';
+      document.getElementById('printCaseId').innerText = ecomap.caseId || 'N/A';
+      document.getElementById('printAssessmentTitle').innerText = ecomap.title || 'Systemic Assessment';
+      document.getElementById('printTherapist').innerText = ecomap.therapistName || 'N/A';
+      document.getElementById('printSupervisor').innerText = ecomap.supervisorName || 'N/A';
+      document.getElementById('printHouseholdCount').innerText = `${ecomap.householdMembers.length} Member(s)`;
+
+      // Systemic Metrics Row on Page 1
+      const total = ecomap.nodes.length;
+      const nurturing = ecomap.nodes.filter(n => n.type === 'STRONG' || n.type === 'GIVING' || n.type === 'RECIPROCAL').length;
+      const stressful = ecomap.nodes.filter(n => n.type === 'STRESSFUL' || n.type === 'DRAINING').length;
+      const tenuous = ecomap.nodes.filter(n => n.type === 'TENUOUS').length;
+
+      document.getElementById('printMetricTotal').innerText = total;
+      document.getElementById('printMetricNurturing').innerText = nurturing;
+      document.getElementById('printMetricStressful').innerText = stressful;
+      document.getElementById('printMetricTenuous').innerText = tenuous;
+
+      // Page 2 Content
+      document.getElementById('printPage2CaseClient').innerText = `Case ID: ${ecomap.caseId} | Client: ${ecomap.clientName}`;
+
+      const printTbody = document.getElementById('printHouseholdTbody');
+      printTbody.innerHTML = '';
+      if (ecomap.householdMembers.length === 0) {
+        printTbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#94A3B8;">No household members recorded.</td></tr>';
+      } else {
+        ecomap.householdMembers.forEach(m => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td><strong>${m.name}</strong></td><td>${m.relation}</td><td>${m.age || '—'}</td>`;
+          printTbody.appendChild(row);
+        });
+      }
+
+      document.getElementById('printPresentingContext').innerText = 
+        ecomap.presentingContext.trim() || 'No presenting problem context entered.';
+      document.getElementById('printClinicalImpressions').innerText = 
+        ecomap.clinicalImpressions.trim() || 'No diagnostic assessment entered.';
+      document.getElementById('printRecommendedInterventions').innerText = 
+        ecomap.recommendedInterventions.trim() || 'No recommendations recorded.';
+    }
+
+    function preparePrintReport() {
+      updateMapInfo();
+      syncPrintData();
+      renderPrintDiagram();
+    }
+
     function exportPdf() {
-      document.getElementById('printMetaLine').innerText = 
-        `${ecomap.facilityName} • Case #${ecomap.caseId} • Client: ${ecomap.clientName} • Clinician: ${ecomap.therapistName}`;
-      window.print();
+      preparePrintReport();
+      // Brief delay to ensure canvas image is rendered into DOM
+      setTimeout(() => {
+        window.print();
+      }, 120);
     }
 
     window.onload = init;

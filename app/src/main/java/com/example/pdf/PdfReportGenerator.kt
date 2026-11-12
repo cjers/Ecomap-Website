@@ -200,7 +200,7 @@ object PdfReportGenerator {
             val dy = rawY - centerY
             val distanceScale = 1.40f - (node.impactRating.coerceIn(1, 5) * 0.15f)
             val nx = (centerX + dx * distanceScale).coerceIn(diagramLeft + 35f, diagramLeft + diagramWidth - 35f)
-            val ny = (centerY + dy * distanceScale).coerceIn(diagramTop + 35f, diagramTop + diagramHeight - 35f)
+            val ny = (centerY + dy * distanceScale).coerceIn(diagramTop + 35f, diagramTop + diagramHeight - 48f)
             return Pair(nx, ny)
         }
 
