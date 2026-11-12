@@ -651,14 +651,6 @@
             <span>Stressful / Depleting</span>
           </div>
         </div>
-
-        <div class="card">
-          <h3><span class="material-symbols-outlined">lightbulb</span> Clinical Guidance & Recommendations</h3>
-          <ul id="analyticsInsights" style="padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-            <li>High priority: Mitigate energy drains from stressful external nodes.</li>
-            <li>Reinforce positive connections with existing supportive community structures.</li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
@@ -1275,18 +1267,6 @@
       document.getElementById('stressfulBar').style.width = (100 - nutPercent) + '%';
       document.getElementById('systemicRatioText').innerText = 
         `Social ecology is ${Math.round(nutPercent)}% Nurturing/Supportive vs ${Math.round(100 - nutPercent)}% Stressful/Depleting.`;
-
-      // Dynamic clinical guidance
-      const insightsList = document.getElementById('analyticsInsights');
-      insightsList.innerHTML = '';
-      if (stressful > nurturing) {
-        insightsList.innerHTML += `<li><strong>Energetic Deficit:</strong> External stressors exceed nurturing supports. Prioritize boundary setting and crisis mitigation around the high-stress nodes.</li>`;
-      } else {
-        insightsList.innerHTML += `<li><strong>Resource Resiliency:</strong> Client exhibits protective systemic buffers with ${nurturing} supportive domain(s). Leverage these connections to bolster resilience.</li>`;
-      }
-      if (tenuous > 0) {
-        insightsList.innerHTML += `<li><strong>Tenuous Relationships:</strong> ${tenuous} domain(s) identified with unstable connections. Assess feasibility of re-engagement or boundary clarification.</li>`;
-      }
     }
 
     function resetSessionData() {
