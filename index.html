@@ -20,6 +20,7 @@
       --danger: #EF4444;
       --success: #10B981;
       --warning: #F59E0B;
+      --purple: #8B5CF6;
     }
 
     * {
@@ -63,9 +64,9 @@
     }
 
     .session-badge {
-      background-color: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #FECACA;
+      background-color: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #A7F3D0;
       font-size: 0.75rem;
       padding: 4px 10px;
       border-radius: 9999px;
@@ -77,7 +78,8 @@
 
     .header-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
+      align-items: center;
     }
 
     .btn {
@@ -181,7 +183,10 @@
       width: 100%;
       height: 100%;
       display: block;
-      cursor: crosshair;
+      cursor: grab;
+    }
+    canvas:active {
+      cursor: grabbing;
     }
 
     .canvas-toolbar {
@@ -195,6 +200,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      z-index: 5;
     }
 
     .icon-btn {
@@ -208,6 +214,7 @@
       align-items: center;
       justify-content: center;
       color: var(--text-main);
+      transition: background 0.15s ease;
     }
     .icon-btn:hover {
       background: #F1F5F9;
@@ -217,19 +224,24 @@
       position: absolute;
       bottom: 16px;
       left: 16px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(6px);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       font-size: 0.8rem;
+      z-index: 5;
+      max-width: 260px;
     }
 
     .legend-card h4 {
       margin-bottom: 8px;
       font-size: 0.85rem;
       color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .legend-item {
@@ -240,8 +252,9 @@
     }
 
     .legend-line {
-      width: 30px;
-      height: 3px;
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
     }
 
     .fab-add {
@@ -250,7 +263,8 @@
       right: 24px;
       padding: 12px 24px;
       border-radius: 30px;
-      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+      z-index: 5;
     }
 
     /* Forms and Panels */
@@ -299,6 +313,7 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 0.95rem;
+      color: var(--text-main);
     }
     .form-control:focus {
       outline: none;
@@ -308,12 +323,30 @@
     textarea.form-control {
       min-height: 100px;
       resize: vertical;
+      line-height: 1.5;
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+
+    /* Household member chips */
+    .member-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .member-table th, .member-table td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+    .member-table th {
+      color: var(--text-muted);
+      font-weight: 500;
     }
 
     /* Modal dialog */
@@ -333,10 +366,12 @@
     .modal {
       background: var(--surface);
       width: 90%;
-      max-width: 500px;
+      max-width: 520px;
       border-radius: 12px;
       padding: 24px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-header {
@@ -370,28 +405,47 @@
     }
 
     .metric-val {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
       margin: 8px 0;
     }
 
     /* Print styles for PDF Report */
     @media print {
-      header, .tabs-bar, .canvas-toolbar, .fab-add, .session-badge, .header-actions {
+      header, .tabs-bar, .canvas-toolbar, .fab-add, .session-badge, .header-actions, .modal-overlay {
         display: none !important;
       }
-      body, .main-container, .tab-content {
+      body, .main-container {
         height: auto !important;
         overflow: visible !important;
         background: #fff !important;
       }
       .tab-content {
         display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        page-break-after: always;
+      }
+      #canvas-tab {
+        height: 600px !important;
+        page-break-inside: avoid;
       }
       .card {
         border: 1px solid #ccc !important;
+        box-shadow: none !important;
         break-inside: avoid;
+        margin-bottom: 16px !important;
       }
+      .print-header {
+        display: block !important;
+        border-bottom: 2px solid #1E293B;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+      }
+    }
+
+    .print-header {
+      display: none;
     }
   </style>
 </head>
@@ -403,10 +457,10 @@
       <span class="material-symbols-outlined" style="font-size: 28px; color: #38BDF8;">hub</span>
       <div>
         <h1>EcoMap Clinical</h1>
-        <div style="font-size: 0.75rem; opacity: 0.8;">Ecomap Assessment & Diagnostic Tool</div>
+        <div style="font-size: 0.75rem; opacity: 0.85;">Ecomap Assessment & Clinical Report System</div>
       </div>
-      <div class="session-badge" title="No data will be saved when browser is closed">
-        <span class="material-symbols-outlined" style="font-size: 14px;">lock_clock</span>
+      <div class="session-badge" title="Zero persistent storage: No data saved past this browser session">
+        <span class="material-symbols-outlined" style="font-size: 14px;">verified_user</span>
         Single Session (Zero Storage)
       </div>
     </div>
@@ -415,7 +469,7 @@
         <span class="material-symbols-outlined">restart_alt</span> Reset Session
       </button>
       <button class="btn btn-primary" onclick="exportPdf()">
-        <span class="material-symbols-outlined">picture_as_pdf</span> Print / Export PDF
+        <span class="material-symbols-outlined">picture_as_pdf</span> Print / Save PDF
       </button>
     </div>
   </header>
@@ -434,6 +488,12 @@
       </button>
     </div>
 
+    <!-- Print Only Cover Header -->
+    <div class="print-header" id="printHeader">
+      <h2 style="font-size: 20pt; color: #1E293B; margin-bottom: 4px;">CLINICAL ECOMAP REPORT</h2>
+      <div style="font-size: 10pt; color: #64748B;" id="printMetaLine">Beacon Behavioral Health Center • Case Assessment</div>
+    </div>
+
     <!-- Tab 1: Interactive Canvas -->
     <div id="canvas-tab" class="tab-content active">
       <canvas id="ecomapCanvas"></canvas>
@@ -442,21 +502,32 @@
         <button class="icon-btn" title="Circle Layout" onclick="applyCircleLayout()">
           <span class="material-symbols-outlined">adjust</span>
         </button>
-        <button class="icon-btn" title="Reset Zoom" onclick="resetZoom()">
+        <button class="icon-btn" title="Symmetric Layout" onclick="applySymmetricLayout()">
+          <span class="material-symbols-outlined">view_agenda</span>
+        </button>
+        <button class="icon-btn" title="Zoom In" onclick="zoom(0.15)">
+          <span class="material-symbols-outlined">zoom_in</span>
+        </button>
+        <button class="icon-btn" title="Zoom Out" onclick="zoom(-0.15)">
+          <span class="material-symbols-outlined">zoom_out</span>
+        </button>
+        <button class="icon-btn" title="Reset View" onclick="resetZoom()">
           <span class="material-symbols-outlined">center_focus_strong</span>
         </button>
       </div>
 
-      <div class="legend-card">
-        <h4>Relational Connection Key</h4>
+      <div class="legend-card" id="legendBox">
+        <h4>
+          <span>Relational Connection Key</span>
+        </h4>
         <div class="legend-item">
-          <div class="legend-line" style="background: #10B981;"></div> Strong / Nurturing
+          <div class="legend-line" style="background: #10B981;"></div> Strong / Nurturing (Solid)
         </div>
         <div class="legend-item">
-          <div class="legend-line" style="background: #EF4444; border-bottom: 2px dashed #EF4444;"></div> Stressful / Conflict
+          <div class="legend-line" style="background: #EF4444; border-top: 2px dashed #EF4444; height: 0;"></div> Stressful / Conflict (Jagged)
         </div>
         <div class="legend-item">
-          <div class="legend-line" style="background: #F59E0B; border-bottom: 2px dashed #F59E0B;"></div> Tenuous / Weak
+          <div class="legend-line" style="background: #F59E0B; border-top: 2px dashed #F59E0B; height: 0;"></div> Tenuous / Weak (Dashed)
         </div>
         <div class="legend-item">
           <div class="legend-line" style="background: #0284C7;"></div> Energy Flow Arrows
@@ -475,12 +546,16 @@
           <h3><span class="material-symbols-outlined">person</span> Client & Case Details</h3>
           <div class="grid-2">
             <div class="form-group">
-              <label>Client Name</label>
+              <label>Client Name / Identifier</label>
               <input type="text" id="clientName" class="form-control" value="Sarah Jenkins" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Case File ID</label>
               <input type="text" id="caseId" class="form-control" value="CS-2026-8891" oninput="updateMapInfo()">
+            </div>
+            <div class="form-group">
+              <label>Assessment Title</label>
+              <input type="text" id="mapTitle" class="form-control" value="Comprehensive Systemic & Social Ecology Assessment" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Therapist / Counselor</label>
@@ -490,7 +565,33 @@
               <label>Facility Name</label>
               <input type="text" id="facilityName" class="form-control" value="Beacon Behavioral Health Center" oninput="updateMapInfo()">
             </div>
+            <div class="form-group">
+              <label>Clinical Supervisor</label>
+              <input type="text" id="supervisorName" class="form-control" value="Dr. Morgan Reed, PsyD" oninput="updateMapInfo()">
+            </div>
           </div>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0;"><span class="material-symbols-outlined">diversity_3</span> Household Members</h3>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addHouseholdMember()">
+              <span class="material-symbols-outlined" style="font-size: 16px;">add</span> Add Member
+            </button>
+          </div>
+          <table class="member-table" id="householdTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Relationship</th>
+                <th>Age</th>
+                <th style="width: 60px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="householdListBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
         </div>
 
         <div class="card">
@@ -536,14 +637,26 @@
         </div>
 
         <div class="card">
-          <h3><span class="material-symbols-outlined">assessment</span> Systemic Health Ratio</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;" id="systemicRatioText">
+          <h3><span class="material-symbols-outlined">assessment</span> Systemic Health & Energy Balance</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;" id="systemicRatioText">
             Analyzing relationship balance...
           </p>
-          <div style="background: #E2E8F0; height: 16px; border-radius: 8px; overflow: hidden; display: flex;" id="ratioBar">
-            <div id="nurturingBar" style="background: #10B981; width: 50%;"></div>
-            <div id="stressfulBar" style="background: #EF4444; width: 50%;"></div>
+          <div style="background: #E2E8F0; height: 20px; border-radius: 10px; overflow: hidden; display: flex;" id="ratioBar">
+            <div id="nurturingBar" style="background: #10B981; width: 50%;" title="Nurturing"></div>
+            <div id="stressfulBar" style="background: #EF4444; width: 50%;" title="Stressful"></div>
           </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: var(--text-muted);">
+            <span>Nurturing / Supportive</span>
+            <span>Stressful / Depleting</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="material-symbols-outlined">lightbulb</span> Clinical Guidance & Recommendations</h3>
+          <ul id="analyticsInsights" style="padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+            <li>High priority: Mitigate energy drains from stressful external nodes.</li>
+            <li>Reinforce positive connections with existing supportive community structures.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -577,7 +690,7 @@
         <label>Relationship Type</label>
         <select id="connType" class="form-control">
           <option value="STRONG">Strong / Nurturing (Solid Line)</option>
-          <option value="STRESSFUL">Stressful / Conflict (Jagged Line)</option>
+          <option value="STRESSFUL">Stressful / Conflict (Jagged Zig-Zag Line)</option>
           <option value="TENUOUS">Tenuous / Weak (Dashed Line)</option>
           <option value="GIVING">Energy Giving (Solid Line)</option>
           <option value="DRAINING">Energy Draining (Dashed Line)</option>
@@ -606,42 +719,67 @@
   </div>
 
   <script>
-    // IN-MEMORY SINGLE SESSION STATE (No localStorage, no persistent storage)
+    // IN-MEMORY SINGLE SESSION STATE
+    // Strictly zero localStorage, sessionStorage, or cookie storage
     let ecomap = {
       clientName: "Sarah Jenkins",
       caseId: "CS-2026-8891",
+      title: "Comprehensive Systemic & Social Ecology Assessment",
       therapistName: "Dr. Alex Taylor, LCSW",
       facilityName: "Beacon Behavioral Health Center",
-      presentingContext: "Client reports high systemic stress stemming from recent employment instability and extended family tensions.",
-      clinicalImpressions: "Ecomap reveals energetic strain from financial and extended family domains, balanced partially by community support.",
-      recommendedInterventions: "1. Establish boundary management strategies.\n2. Connect client with vocational support services.",
+      supervisorName: "Dr. Morgan Reed, PsyD",
+      presentingContext: "Client reports high systemic stress stemming from recent employment instability and extended family tensions. Strong nurturing support is derived from local community peer group.",
+      clinicalImpressions: "Ecomap reveals significant energetic strain from financial and extended family domains, balanced partially by positive engagement in outpatient therapy and community support.",
+      recommendedInterventions: "1. Establish boundary management strategies regarding extended family.\n2. Connect client with vocational support services.\n3. Continue weekly supportive counseling.",
+      householdMembers: [
+        { name: "Sarah Jenkins", relation: "Self / Client", age: "34" },
+        { name: "Leo Jenkins", relation: "Son", age: "8" },
+        { name: "Maya Jenkins", relation: "Daughter", age: "5" }
+      ],
       nodes: [
-        { id: "1", title: "Extended Family", category: "FAMILY", relativeX: 0.25, relativeY: 0.25, impact: 4, type: "STRESSFUL", flow: "AWAY_FROM_CLIENT" },
-        { id: "2", title: "Primary Care / Clinic", category: "HEALTHCARE", relativeX: 0.75, relativeY: 0.25, impact: 3, type: "STRONG", flow: "TOWARDS_CLIENT" },
-        { id: "3", title: "Community Support Group", category: "COMMUNITY", relativeX: 0.25, relativeY: 0.75, impact: 5, type: "STRONG", flow: "BIDIRECTIONAL" },
-        { id: "4", title: "Employment / Job", category: "WORK", relativeX: 0.75, relativeY: 0.75, impact: 4, type: "DRAINING", flow: "AWAY_FROM_CLIENT" }
+        { id: "1", title: "Extended Family", category: "FAMILY", relativeX: 0.22, relativeY: 0.24, impact: 4, type: "STRESSFUL", flow: "AWAY_FROM_CLIENT" },
+        { id: "2", title: "Primary Clinic", category: "HEALTHCARE", relativeX: 0.78, relativeY: 0.22, impact: 3, type: "STRONG", flow: "TOWARDS_CLIENT" },
+        { id: "3", title: "Peer Group", category: "COMMUNITY", relativeX: 0.20, relativeY: 0.76, impact: 5, type: "STRONG", flow: "BIDIRECTIONAL" },
+        { id: "4", title: "Employment", category: "WORK", relativeX: 0.80, relativeY: 0.76, impact: 4, type: "DRAINING", flow: "AWAY_FROM_CLIENT" },
+        { id: "5", title: "Elementary School", category: "EDUCATION", relativeX: 0.50, relativeY: 0.16, impact: 4, type: "STRONG", flow: "BIDIRECTIONAL" }
       ]
     };
 
     let selectedNodeId = null;
     let isDragging = false;
     let draggedNode = null;
+    let hasMoved = false;
+
+    let zoomScale = 1.0;
+    let panOffset = { x: 0, y: 0 };
+    let isPanning = false;
+    let startPan = { x: 0, y: 0 };
 
     const canvas = document.getElementById('ecomapCanvas');
     const ctx = canvas.getContext('2d');
 
-    function initCanvas() {
+    function init() {
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
-      canvas.addEventListener('mousedown', onMouseDown);
-      canvas.addEventListener('mousemove', onMouseMove);
-      canvas.addEventListener('mouseup', onMouseUp);
+      // Mouse events
+      canvas.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+      canvas.addEventListener('dblclick', onDoubleClick);
+
+      // Touch events for mobile/tablet browsers
+      canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('touchend', onTouchEnd);
+
+      renderHouseholdTable();
       renderCanvas();
       updateAnalytics();
     }
 
     function resizeCanvas() {
+      if (!canvas.parentElement) return;
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = canvas.parentElement.clientHeight;
       renderCanvas();
@@ -650,30 +788,35 @@
     function renderCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      ctx.save();
+      // Apply pan & zoom transformations
+      ctx.translate(canvas.width / 2 + panOffset.x, canvas.height / 2 + panOffset.y);
+      ctx.scale(zoomScale, zoomScale);
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
       const centerX = canvas.width * 0.5;
       const centerY = canvas.height * 0.5;
-      const centerRadius = 50;
-      const nodeRadius = 32;
+      const centerRadius = 56;
+      const nodeRadius = 34;
 
       // Draw Grid dots
       ctx.fillStyle = '#CBD5E1';
-      for (let x = 0; x < canvas.width; x += 40) {
-        for (let y = 0; y < canvas.height; y += 40) {
+      for (let x = -canvas.width; x < canvas.width * 2; x += 40) {
+        for (let y = -canvas.height; y < canvas.height * 2; y += 40) {
           ctx.beginPath();
           ctx.arc(x, y, 1.5, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      // Draw Connection lines
+      // Draw Relational Connection lines
       ecomap.nodes.forEach(node => {
         const nx = node.relativeX * canvas.width;
         const ny = node.relativeY * canvas.height;
-
-        drawConnection(centerX, centerY, nx, ny, centerRadius, nodeRadius, node.type, node.flow);
+        drawRelationalConnection(centerX, centerY, nx, ny, centerRadius, nodeRadius, node.type, node.flow);
       });
 
-      // Draw Central Client Household Circle
+      // Draw Central Client Household Node
       ctx.beginPath();
       ctx.arc(centerX, centerY, centerRadius, 0, Math.PI * 2);
       ctx.fillStyle = '#1E293B';
@@ -683,32 +826,53 @@
       ctx.stroke();
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 14px Roboto, sans-serif';
+      ctx.font = 'bold 15px Roboto, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(ecomap.clientName.split(' ')[0], centerX, centerY - 4);
+      const firstName = ecomap.clientName.trim().split(' ')[0] || 'Client';
+      ctx.fillText(firstName, centerX, centerY - 8);
+
       ctx.font = '10px Roboto, sans-serif';
+      ctx.fillStyle = '#38BDF8';
+      ctx.fillText('Household System', centerX, centerY + 8);
       ctx.fillStyle = '#94A3B8';
-      ctx.fillText('Household', centerX, centerY + 12);
+      ctx.fillText(`${ecomap.householdMembers.length} Member(s)`, centerX, centerY + 22);
 
       // Draw Domain Nodes
       ecomap.nodes.forEach(node => {
         const nx = node.relativeX * canvas.width;
         const ny = node.relativeY * canvas.height;
+        const isSelected = selectedNodeId === node.id;
 
+        // Node circle
         ctx.beginPath();
         ctx.arc(nx, ny, nodeRadius, 0, Math.PI * 2);
         ctx.fillStyle = getNodeColor(node.category);
         ctx.fill();
 
-        ctx.lineWidth = selectedNodeId === node.id ? 4 : 2;
-        ctx.strokeStyle = selectedNodeId === node.id ? '#F59E0B' : '#FFFFFF';
+        ctx.lineWidth = isSelected ? 4 : 2;
+        ctx.strokeStyle = isSelected ? '#F59E0B' : '#FFFFFF';
         ctx.stroke();
 
+        // Node Title
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 11px Roboto, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(node.title.substring(0, 10), nx, ny + 4);
+        const displayTitle = node.title.length > 12 ? node.title.substring(0, 11) + '..' : node.title;
+        ctx.fillText(displayTitle, nx, ny + 4);
+
+        // Star Impact Indicators
+        drawImpactStars(nx, ny + nodeRadius + 14, node.impact);
       });
+
+      ctx.restore();
+    }
+
+    function drawImpactStars(x, y, count) {
+      ctx.fillStyle = '#F59E0B';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      const stars = '★'.repeat(Math.min(5, Math.max(1, count)));
+      ctx.fillText(stars, x, y);
     }
 
     function getNodeColor(cat) {
@@ -718,11 +882,14 @@
         case 'HEALTHCARE': return '#10B981';
         case 'SOCIAL': return '#8B5CF6';
         case 'COMMUNITY': return '#EC4899';
+        case 'EDUCATION': return '#6366F1';
+        case 'FINANCE': return '#059669';
+        case 'LEGAL': return '#475569';
         default: return '#64748B';
       }
     }
 
-    function drawConnection(x1, y1, x2, y2, r1, r2, type, flow) {
+    function drawRelationalConnection(x1, y1, x2, y2, r1, r2, type, flow) {
       const dx = x2 - x1;
       const dy = y2 - y1;
       const dist = Math.hypot(dx, dy);
@@ -734,57 +901,222 @@
       const ey = y2 - (dy * r2 / dist);
 
       ctx.save();
-      ctx.beginPath();
+      let lineColor = '#10B981';
+      let lineWidth = 4;
+
       if (type === 'STRESSFUL') {
-        ctx.strokeStyle = '#EF4444';
-        ctx.lineWidth = 3;
-        ctx.setLineDash([8, 6]);
+        lineColor = '#EF4444';
+        lineWidth = 3;
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath();
+        // Jagged Zig-Zag line
+        const steps = 8;
+        const stepX = (ex - sx) / steps;
+        const stepY = (ey - sy) / steps;
+        const perpX = -(ey - sy) / dist * 10;
+        const perpY = (ex - sx) / dist * 10;
+
+        ctx.moveTo(sx, sy);
+        for (let i = 1; i <= steps; i++) {
+          const side = (i % 2 === 1) ? 1 : -1;
+          const px = sx + stepX * i + (i === steps ? 0 : perpX * side);
+          const py = sy + stepY * i + (i === steps ? 0 : perpY * side);
+          ctx.lineTo(px, py);
+        }
+        ctx.stroke();
       } else if (type === 'TENUOUS' || type === 'DRAINING') {
-        ctx.strokeStyle = '#F59E0B';
-        ctx.lineWidth = 3;
-        ctx.setLineDash([6, 6]);
+        lineColor = (type === 'DRAINING') ? '#F97316' : '#F59E0B';
+        lineWidth = 3;
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = lineWidth;
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
       } else {
-        ctx.strokeStyle = '#10B981';
-        ctx.lineWidth = 4;
+        // Strong / Giving / Reciprocal
+        lineColor = (type === 'GIVING') ? '#06B6D4' : '#10B981';
+        lineWidth = 4;
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = lineWidth;
         ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
       }
 
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(ex, ey);
-      ctx.stroke();
+      // Draw Arrowheads
+      const angle = Math.atan2(dy, dx);
+      if (flow === 'TOWARDS_CLIENT' || flow === 'BIDIRECTIONAL') {
+        drawArrowHead(sx, sy, angle + Math.PI, lineColor);
+      }
+      if (flow === 'AWAY_FROM_CLIENT' || flow === 'BIDIRECTIONAL') {
+        drawArrowHead(ex, ey, angle, lineColor);
+      }
+
       ctx.restore();
     }
 
-    function onMouseDown(e) {
-      const rect = canvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
+    function drawArrowHead(x, y, angle, color) {
+      const size = 12;
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - size * Math.cos(angle - Math.PI / 6), y - size * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x - size * Math.cos(angle + Math.PI / 6), y - size * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
 
+    // Pointer Event Handling (Panning & Node Dragging)
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const screenX = clientX - rect.left;
+      const screenY = clientY - rect.top;
+
+      // Reverse transform
+      const originX = canvas.width / 2;
+      const originY = canvas.height / 2;
+      const worldX = (screenX - originX - panOffset.x) / zoomScale + originX;
+      const worldY = (screenY - originY - panOffset.y) / zoomScale + originY;
+
+      return { screenX, screenY, worldX, worldY };
+    }
+
+    function onPointerDown(e) {
+      const coords = getCanvasCoordinates(e);
+      hasMoved = false;
+
+      // Check if user clicked a node
       draggedNode = ecomap.nodes.find(n => {
         const nx = n.relativeX * canvas.width;
         const ny = n.relativeY * canvas.height;
-        return Math.hypot(clickX - nx, clickY - ny) <= 35;
+        return Math.hypot(coords.worldX - nx, coords.worldY - ny) <= 36;
       });
 
       if (draggedNode) {
         isDragging = true;
         selectedNodeId = draggedNode.id;
         renderCanvas();
+      } else {
+        // Check if user clicked center node to open Client details
+        const centerX = canvas.width * 0.5;
+        const centerY = canvas.height * 0.5;
+        if (Math.hypot(coords.worldX - centerX, coords.worldY - centerY) <= 56) {
+          switchTab('notes-tab', document.querySelectorAll('.tab-btn')[1]);
+          return;
+        }
+
+        // Otherwise canvas panning
+        isPanning = true;
+        startPan = { x: coords.screenX - panOffset.x, y: coords.screenY - panOffset.y };
       }
     }
 
-    function onMouseMove(e) {
+    function onPointerMove(e) {
       if (isDragging && draggedNode) {
+        hasMoved = true;
+        const coords = getCanvasCoordinates(e);
+        draggedNode.relativeX = Math.max(0.08, Math.min(0.92, coords.worldX / canvas.width));
+        draggedNode.relativeY = Math.max(0.08, Math.min(0.92, coords.worldY / canvas.height));
+        renderCanvas();
+      } else if (isPanning) {
+        hasMoved = true;
         const rect = canvas.getBoundingClientRect();
-        draggedNode.relativeX = (e.clientX - rect.left) / canvas.width;
-        draggedNode.relativeY = (e.clientY - rect.top) / canvas.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        panOffset.x = (clientX - rect.left) - startPan.x;
+        panOffset.y = (clientY - rect.top) - startPan.y;
         renderCanvas();
       }
     }
 
-    function onMouseUp() {
+    function onPointerUp(e) {
+      if (isDragging && !hasMoved && draggedNode) {
+        openNodeModal(draggedNode.id);
+      }
       isDragging = false;
+      isPanning = false;
       draggedNode = null;
+    }
+
+    function onDoubleClick(e) {
+      const coords = getCanvasCoordinates(e);
+      const clicked = ecomap.nodes.find(n => {
+        const nx = n.relativeX * canvas.width;
+        const ny = n.relativeY * canvas.height;
+        return Math.hypot(coords.worldX - nx, coords.worldY - ny) <= 36;
+      });
+      if (clicked) {
+        openNodeModal(clicked.id);
+      }
+    }
+
+    // Touch event wrappers
+    function onTouchStart(e) {
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        onPointerDown(e);
+      }
+    }
+    function onTouchMove(e) {
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        onPointerMove(e);
+      }
+    }
+    function onTouchEnd(e) {
+      onPointerUp(e);
+    }
+
+    function zoom(delta) {
+      zoomScale = Math.max(0.4, Math.min(2.5, zoomScale + delta));
+      renderCanvas();
+    }
+
+    function resetZoom() {
+      zoomScale = 1.0;
+      panOffset = { x: 0, y: 0 };
+      renderCanvas();
+    }
+
+    function applyCircleLayout() {
+      const count = ecomap.nodes.length;
+      if (count === 0) return;
+      ecomap.nodes.forEach((node, i) => {
+        const angle = (i / count) * 2 * Math.PI - (Math.PI / 2);
+        node.relativeX = 0.5 + 0.35 * Math.cos(angle);
+        node.relativeY = 0.5 + 0.35 * Math.sin(angle);
+      });
+      renderCanvas();
+    }
+
+    function applySymmetricLayout() {
+      const count = ecomap.nodes.length;
+      if (count === 0) return;
+      const leftNodes = [];
+      const rightNodes = [];
+      ecomap.nodes.forEach((n, idx) => {
+        if (idx % 2 === 0) leftNodes.push(n);
+        else rightNodes.push(n);
+      });
+
+      leftNodes.forEach((node, i) => {
+        node.relativeX = 0.22;
+        node.relativeY = (i + 1) / (leftNodes.length + 1);
+      });
+      rightNodes.forEach((node, i) => {
+        node.relativeX = 0.78;
+        node.relativeY = (i + 1) / (rightNodes.length + 1);
+      });
+      renderCanvas();
     }
 
     function switchTab(tabId, btnElement) {
@@ -793,26 +1125,13 @@
       document.getElementById(tabId).classList.add('active');
       btnElement.classList.add('active');
       if (tabId === 'canvas-tab') {
-        renderCanvas();
+        resizeCanvas();
       } else if (tabId === 'analytics-tab') {
         updateAnalytics();
       }
     }
 
-    function applyCircleLayout() {
-      const n = ecomap.nodes.length;
-      ecomap.nodes.forEach((node, idx) => {
-        const angle = (idx / n) * 2 * Math.PI;
-        node.relativeX = 0.5 + 0.35 * Math.cos(angle);
-        node.relativeY = 0.5 + 0.35 * Math.sin(angle);
-      });
-      renderCanvas();
-    }
-
-    function resetZoom() {
-      renderCanvas();
-    }
-
+    // Modal Actions
     function openNodeModal(nodeId = null) {
       selectedNodeId = nodeId;
       const modal = document.getElementById('nodeModal');
@@ -845,7 +1164,7 @@
     }
 
     function saveNode() {
-      const title = document.getElementById('nodeTitle').value.trim() || 'Domain';
+      const title = document.getElementById('nodeTitle').value.trim() || 'New Domain';
       const category = document.getElementById('nodeCategory').value;
       const type = document.getElementById('connType').value;
       const flow = document.getElementById('flowDir').value;
@@ -853,11 +1172,13 @@
 
       if (selectedNodeId) {
         const node = ecomap.nodes.find(n => n.id === selectedNodeId);
-        node.title = title;
-        node.category = category;
-        node.type = type;
-        node.flow = flow;
-        node.impact = impact;
+        if (node) {
+          node.title = title;
+          node.category = category;
+          node.type = type;
+          node.flow = flow;
+          node.impact = impact;
+        }
       } else {
         ecomap.nodes.push({
           id: Date.now().toString(),
@@ -889,11 +1210,52 @@
     function updateMapInfo() {
       ecomap.clientName = document.getElementById('clientName').value;
       ecomap.caseId = document.getElementById('caseId').value;
+      ecomap.title = document.getElementById('mapTitle').value;
       ecomap.therapistName = document.getElementById('therapistName').value;
       ecomap.facilityName = document.getElementById('facilityName').value;
+      ecomap.supervisorName = document.getElementById('supervisorName').value;
       ecomap.presentingContext = document.getElementById('presentingContext').value;
       ecomap.clinicalImpressions = document.getElementById('clinicalImpressions').value;
       ecomap.recommendedInterventions = document.getElementById('recommendedInterventions').value;
+      renderCanvas();
+    }
+
+    // Household Table
+    function renderHouseholdTable() {
+      const tbody = document.getElementById('householdListBody');
+      tbody.innerHTML = '';
+      ecomap.householdMembers.forEach((member, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${member.name}</strong></td>
+          <td>${member.relation}</td>
+          <td>${member.age || '—'}</td>
+          <td>
+            <button class="icon-btn" style="width: 28px; height: 28px; color: var(--danger);" onclick="removeHouseholdMember(${index})">
+              <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addHouseholdMember() {
+      const name = prompt("Enter household member name:");
+      if (!name) return;
+      const relation = prompt("Enter relation to client (e.g., Spouse, Child, Parent):") || "Relative";
+      const age = prompt("Enter age (optional):") || "";
+      ecomap.householdMembers.push({ name, relation, age });
+      renderHouseholdTable();
+      renderCanvas();
+    }
+
+    function removeHouseholdMember(index) {
+      if (confirm("Remove this household member?")) {
+        ecomap.householdMembers.splice(index, 1);
+        renderHouseholdTable();
+        renderCanvas();
+      }
     }
 
     function updateAnalytics() {
@@ -910,22 +1272,43 @@
       const nutPercent = total > 0 ? (nurturing / total) * 100 : 50;
       document.getElementById('nurturingBar').style.width = nutPercent + '%';
       document.getElementById('stressfulBar').style.width = (100 - nutPercent) + '%';
-      document.getElementById('systemicRatioText').innerText = `System is ${Math.round(nutPercent)}% Nurturing vs ${Math.round(100 - nutPercent)}% Stressful / Draining.`;
+      document.getElementById('systemicRatioText').innerText = 
+        `Social ecology is ${Math.round(nutPercent)}% Nurturing/Supportive vs ${Math.round(100 - nutPercent)}% Stressful/Depleting.`;
+
+      // Dynamic clinical guidance
+      const insightsList = document.getElementById('analyticsInsights');
+      insightsList.innerHTML = '';
+      if (stressful > nurturing) {
+        insightsList.innerHTML += `<li><strong>Energetic Deficit:</strong> External stressors exceed nurturing supports. Prioritize boundary setting and crisis mitigation around the high-stress nodes.</li>`;
+      } else {
+        insightsList.innerHTML += `<li><strong>Resource Resiliency:</strong> Client exhibits protective systemic buffers with ${nurturing} supportive domain(s). Leverage these connections to bolster resilience.</li>`;
+      }
+      if (tenuous > 0) {
+        insightsList.innerHTML += `<li><strong>Tenuous Relationships:</strong> ${tenuous} domain(s) identified with unstable connections. Assess feasibility of re-engagement or boundary clarification.</li>`;
+      }
     }
 
     function resetSessionData() {
-      if (confirm("Reset current session? All unsaved data entered in this session will be cleared.")) {
+      if (confirm("Reset current session? All unsaved data entered in this session will be cleared permanently.")) {
         ecomap.nodes = [];
+        ecomap.householdMembers = [];
+        ecomap.clientName = "New Client";
+        ecomap.caseId = "CS-" + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('clientName').value = ecomap.clientName;
+        document.getElementById('caseId').value = ecomap.caseId;
+        renderHouseholdTable();
         renderCanvas();
         updateAnalytics();
       }
     }
 
     function exportPdf() {
+      document.getElementById('printMetaLine').innerText = 
+        `${ecomap.facilityName} • Case #${ecomap.caseId} • Client: ${ecomap.clientName} • Clinician: ${ecomap.therapistName}`;
       window.print();
     }
 
-    window.onload = initCanvas;
+    window.onload = init;
   </script>
 </body>
 </html>
