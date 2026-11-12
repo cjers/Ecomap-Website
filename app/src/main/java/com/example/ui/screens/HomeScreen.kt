@@ -190,7 +190,7 @@ fun HomeScreen(
             text = {
                 Column {
                     Text(
-                        text = "A standalone single-session web edition is generated in web/index.html.",
+                        text = "A standalone single-session web edition is ready in index.html (root directory).",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -209,7 +209,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "To deploy on your website, copy web/index.html to your server root or embed it in an <iframe>.",
+                            text = "To deploy on your website, copy index.html to your server root or embed it in an <iframe>.",
                             fontSize = 11.sp,
                             modifier = Modifier.padding(10.dp),
                             color = MaterialTheme.colorScheme.onSecondaryContainer
