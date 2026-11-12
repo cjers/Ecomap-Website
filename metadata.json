@@ -1,0 +1,8 @@
+{
+  "name": "Remix EcoMap Clinical",
+  "description": "Professional Ecomap builder and clinical PDF report generator for psychotherapists, social workers, and counselors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

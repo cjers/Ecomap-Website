@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoMap Clinical - Web Edition (Single Session Mode)</title>
+  <!-- Material Symbols & Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+  <style>
+    :root {
+      --primary: #1E293B;
+      --primary-light: #334155;
+      --accent: #0284C7;
+      --accent-hover: #0369A1;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --danger: #EF4444;
+      --success: #10B981;
+      --warning: #F59E0B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Bar Header */
+    header {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .session-badge {
+      background-color: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #FECACA;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #FFFFFF;
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: #475569;
+      color: #FFFFFF;
+    }
+    .btn-secondary:hover {
+      background-color: #334155;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: #FFFFFF;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #FFFFFF;
+    }
+    .btn-outline:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    /* Main Container & Tabs */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: calc(100vh - 60px);
+    }
+
+    .tabs-bar {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      padding: 0 24px;
+    }
+
+    .tab-btn {
+      padding: 14px 20px;
+      border: none;
+      background: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tab-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Canvas View */
+    #canvas-tab {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background-color: #F1F5F9;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    .canvas-toolbar {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+    }
+    .icon-btn:hover {
+      background: #F1F5F9;
+    }
+
+    .legend-card {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      font-size: 0.8rem;
+    }
+
+    .legend-card h4 {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .legend-line {
+      width: 30px;
+      height: 3px;
+    }
+
+    .fab-add {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Forms and Panels */
+    .panel-view {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Modal dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      width: 90%;
+      max-width: 500px;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    /* Analytics metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    /* Print styles for PDF Report */
+    @media print {
+      header, .tabs-bar, .canvas-toolbar, .fab-add, .session-badge, .header-actions {
+        display: none !important;
+      }
+      body, .main-container, .tab-content {
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+      .tab-content {
+        display: block !important;
+      }
+      .card {
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <span class="material-symbols-outlined" style="font-size: 28px; color: #38BDF8;">hub</span>
+      <div>
+        <h1>EcoMap Clinical</h1>
+        <div style="font-size: 0.75rem; opacity: 0.8;">Ecomap Assessment & Diagnostic Tool</div>
+      </div>
+      <div class="session-badge" title="No data will be saved when browser is closed">
+        <span class="material-symbols-outlined" style="font-size: 14px;">lock_clock</span>
+        Single Session (Zero Storage)
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" onclick="resetSessionData()">
+        <span class="material-symbols-outlined">restart_alt</span> Reset Session
+      </button>
+      <button class="btn btn-primary" onclick="exportPdf()">
+        <span class="material-symbols-outlined">picture_as_pdf</span> Print / Export PDF
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- View Navigation Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('canvas-tab', this)">
+        <span class="material-symbols-outlined">schema</span> Visual Ecomap Canvas
+      </button>
+      <button class="tab-btn" onclick="switchTab('notes-tab', this)">
+        <span class="material-symbols-outlined">clinical_notes</span> Clinical Documentation
+      </button>
+      <button class="tab-btn" onclick="switchTab('analytics-tab', this)">
+        <span class="material-symbols-outlined">analytics</span> Systemic Analytics
+      </button>
+    </div>
+
+    <!-- Tab 1: Interactive Canvas -->
+    <div id="canvas-tab" class="tab-content active">
+      <canvas id="ecomapCanvas"></canvas>
+
+      <div class="canvas-toolbar">
+        <button class="icon-btn" title="Circle Layout" onclick="applyCircleLayout()">
+          <span class="material-symbols-outlined">adjust</span>
+        </button>
+        <button class="icon-btn" title="Reset Zoom" onclick="resetZoom()">
+          <span class="material-symbols-outlined">center_focus_strong</span>
+        </button>
+      </div>
+
+      <div class="legend-card">
+        <h4>Relational Connection Key</h4>
+        <div class="legend-item">
+          <div class="legend-line" style="background: #10B981;"></div> Strong / Nurturing
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background: #EF4444; border-bottom: 2px dashed #EF4444;"></div> Stressful / Conflict
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background: #F59E0B; border-bottom: 2px dashed #F59E0B;"></div> Tenuous / Weak
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background: #0284C7;"></div> Energy Flow Arrows
+        </div>
+      </div>
+
+      <button class="btn btn-primary fab-add" onclick="openNodeModal()">
+        <span class="material-symbols-outlined">add</span> Add Domain Node
+      </button>
+    </div>
+
+    <!-- Tab 2: Clinical Notes -->
+    <div id="notes-tab" class="tab-content">
+      <div class="panel-view">
+        <div class="card">
+          <h3><span class="material-symbols-outlined">person</span> Client & Case Details</h3>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Client Name</label>
+              <input type="text" id="clientName" class="form-control" value="Sarah Jenkins" oninput="updateMapInfo()">
+            </div>
+            <div class="form-group">
+              <label>Case File ID</label>
+              <input type="text" id="caseId" class="form-control" value="CS-2026-8891" oninput="updateMapInfo()">
+            </div>
+            <div class="form-group">
+              <label>Therapist / Counselor</label>
+              <input type="text" id="therapistName" class="form-control" value="Dr. Alex Taylor, LCSW" oninput="updateMapInfo()">
+            </div>
+            <div class="form-group">
+              <label>Facility Name</label>
+              <input type="text" id="facilityName" class="form-control" value="Beacon Behavioral Health Center" oninput="updateMapInfo()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="material-symbols-outlined">edit_note</span> Clinical Impressions & Narrative</h3>
+          <div class="form-group">
+            <label>Presenting Context & Social Ecology</label>
+            <textarea id="presentingContext" class="form-control" oninput="updateMapInfo()">Client reports high systemic stress stemming from recent employment instability and extended family tensions. Strong nurturing support is derived from local community peer group.</textarea>
+          </div>
+          <div class="form-group">
+            <label>Diagnostic Assessment & Systemic Dynamics</label>
+            <textarea id="clinicalImpressions" class="form-control" oninput="updateMapInfo()">Ecomap reveals significant energetic strain from financial and extended family domains, balanced partially by positive engagement in outpatient therapy and community support.</textarea>
+          </div>
+          <div class="form-group">
+            <label>Recommended Clinical Interventions</label>
+            <textarea id="recommendedInterventions" class="form-control" oninput="updateMapInfo()">1. Establish boundary management strategies regarding extended family.
+2. Connect client with vocational support services.
+3. Continue weekly supportive counseling.</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Systemic Analytics -->
+    <div id="analytics-tab" class="tab-content">
+      <div class="panel-view">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div style="color: var(--text-muted); font-size: 0.85rem;">Total External Domains</div>
+            <div id="totalDomainsCount" class="metric-val" style="color: var(--primary);">0</div>
+          </div>
+          <div class="metric-card">
+            <div style="color: var(--text-muted); font-size: 0.85rem;">Nurturing Supports</div>
+            <div id="nurturingCount" class="metric-val" style="color: var(--success);">0</div>
+          </div>
+          <div class="metric-card">
+            <div style="color: var(--text-muted); font-size: 0.85rem;">Stressful / Conflict Nodes</div>
+            <div id="stressfulCount" class="metric-val" style="color: var(--danger);">0</div>
+          </div>
+          <div class="metric-card">
+            <div style="color: var(--text-muted); font-size: 0.85rem;">Tenuous Connections</div>
+            <div id="tenuousCount" class="metric-val" style="color: var(--warning);">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span class="material-symbols-outlined">assessment</span> Systemic Health Ratio</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;" id="systemicRatioText">
+            Analyzing relationship balance...
+          </p>
+          <div style="background: #E2E8F0; height: 16px; border-radius: 8px; overflow: hidden; display: flex;" id="ratioBar">
+            <div id="nurturingBar" style="background: #10B981; width: 50%;"></div>
+            <div id="stressfulBar" style="background: #EF4444; width: 50%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Node Modal -->
+  <div id="nodeModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Domain Node</h3>
+        <button class="icon-btn" onclick="closeNodeModal()"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="form-group">
+        <label>Domain Title</label>
+        <input type="text" id="nodeTitle" class="form-control" placeholder="e.g., Extended Family, Work, Healthcare">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="nodeCategory" class="form-control">
+          <option value="FAMILY">Family & Relatives</option>
+          <option value="WORK">Work & Career</option>
+          <option value="HEALTHCARE">Healthcare & Medical</option>
+          <option value="SOCIAL">Friends & Social Network</option>
+          <option value="EDUCATION">School & Education</option>
+          <option value="FINANCE">Financial System</option>
+          <option value="LEGAL">Legal & Judicial</option>
+          <option value="COMMUNITY">Community & Religion</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Relationship Type</label>
+        <select id="connType" class="form-control">
+          <option value="STRONG">Strong / Nurturing (Solid Line)</option>
+          <option value="STRESSFUL">Stressful / Conflict (Jagged Line)</option>
+          <option value="TENUOUS">Tenuous / Weak (Dashed Line)</option>
+          <option value="GIVING">Energy Giving (Solid Line)</option>
+          <option value="DRAINING">Energy Draining (Dashed Line)</option>
+          <option value="RECIPROCAL">Reciprocal Support (Solid Line)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Energy Flow Direction</label>
+        <select id="flowDir" class="form-control">
+          <option value="TOWARDS_CLIENT">Towards Client (Incoming)</option>
+          <option value="AWAY_FROM_CLIENT">Away From Client (Outgoing)</option>
+          <option value="BIDIRECTIONAL">Bidirectional Flow</option>
+          <option value="NONE">No Flow Indicator</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Impact Rating (1 = Minor, 5 = Severe / Critical)</label>
+        <input type="number" id="nodeImpact" class="form-control" min="1" max="5" value="3">
+      </div>
+      <div class="modal-footer">
+        <button id="deleteNodeBtn" class="btn btn-danger" style="display:none; margin-right: auto;" onclick="deleteCurrentNode()">Delete Node</button>
+        <button class="btn btn-secondary" onclick="closeNodeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNode()">Save Node</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // IN-MEMORY SINGLE SESSION STATE (No localStorage, no persistent storage)
+    let ecomap = {
+      clientName: "Sarah Jenkins",
+      caseId: "CS-2026-8891",
+      therapistName: "Dr. Alex Taylor, LCSW",
+      facilityName: "Beacon Behavioral Health Center",
+      presentingContext: "Client reports high systemic stress stemming from recent employment instability and extended family tensions.",
+      clinicalImpressions: "Ecomap reveals energetic strain from financial and extended family domains, balanced partially by community support.",
+      recommendedInterventions: "1. Establish boundary management strategies.\n2. Connect client with vocational support services.",
+      nodes: [
+        { id: "1", title: "Extended Family", category: "FAMILY", relativeX: 0.25, relativeY: 0.25, impact: 4, type: "STRESSFUL", flow: "AWAY_FROM_CLIENT" },
+        { id: "2", title: "Primary Care / Clinic", category: "HEALTHCARE", relativeX: 0.75, relativeY: 0.25, impact: 3, type: "STRONG", flow: "TOWARDS_CLIENT" },
+        { id: "3", title: "Community Support Group", category: "COMMUNITY", relativeX: 0.25, relativeY: 0.75, impact: 5, type: "STRONG", flow: "BIDIRECTIONAL" },
+        { id: "4", title: "Employment / Job", category: "WORK", relativeX: 0.75, relativeY: 0.75, impact: 4, type: "DRAINING", flow: "AWAY_FROM_CLIENT" }
+      ]
+    };
+
+    let selectedNodeId = null;
+    let isDragging = false;
+    let draggedNode = null;
+
+    const canvas = document.getElementById('ecomapCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function initCanvas() {
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      canvas.addEventListener('mousedown', onMouseDown);
+      canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('mouseup', onMouseUp);
+      renderCanvas();
+      updateAnalytics();
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+      renderCanvas();
+    }
+
+    function renderCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const centerX = canvas.width * 0.5;
+      const centerY = canvas.height * 0.5;
+      const centerRadius = 50;
+      const nodeRadius = 32;
+
+      // Draw Grid dots
+      ctx.fillStyle = '#CBD5E1';
+      for (let x = 0; x < canvas.width; x += 40) {
+        for (let y = 0; y < canvas.height; y += 40) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Draw Connection lines
+      ecomap.nodes.forEach(node => {
+        const nx = node.relativeX * canvas.width;
+        const ny = node.relativeY * canvas.height;
+
+        drawConnection(centerX, centerY, nx, ny, centerRadius, nodeRadius, node.type, node.flow);
+      });
+
+      // Draw Central Client Household Circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, Math.PI * 2);
+      ctx.fillStyle = '#1E293B';
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#0284C7';
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 14px Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(ecomap.clientName.split(' ')[0], centerX, centerY - 4);
+      ctx.font = '10px Roboto, sans-serif';
+      ctx.fillStyle = '#94A3B8';
+      ctx.fillText('Household', centerX, centerY + 12);
+
+      // Draw Domain Nodes
+      ecomap.nodes.forEach(node => {
+        const nx = node.relativeX * canvas.width;
+        const ny = node.relativeY * canvas.height;
+
+        ctx.beginPath();
+        ctx.arc(nx, ny, nodeRadius, 0, Math.PI * 2);
+        ctx.fillStyle = getNodeColor(node.category);
+        ctx.fill();
+
+        ctx.lineWidth = selectedNodeId === node.id ? 4 : 2;
+        ctx.strokeStyle = selectedNodeId === node.id ? '#F59E0B' : '#FFFFFF';
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 11px Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(node.title.substring(0, 10), nx, ny + 4);
+      });
+    }
+
+    function getNodeColor(cat) {
+      switch(cat) {
+        case 'FAMILY': return '#0284C7';
+        case 'WORK': return '#D97706';
+        case 'HEALTHCARE': return '#10B981';
+        case 'SOCIAL': return '#8B5CF6';
+        case 'COMMUNITY': return '#EC4899';
+        default: return '#64748B';
+      }
+    }
+
+    function drawConnection(x1, y1, x2, y2, r1, r2, type, flow) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.hypot(dx, dy);
+      if (dist <= r1 + r2) return;
+
+      const sx = x1 + (dx * r1 / dist);
+      const sy = y1 + (dy * r1 / dist);
+      const ex = x2 - (dx * r2 / dist);
+      const ey = y2 - (dy * r2 / dist);
+
+      ctx.save();
+      ctx.beginPath();
+      if (type === 'STRESSFUL') {
+        ctx.strokeStyle = '#EF4444';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 6]);
+      } else if (type === 'TENUOUS' || type === 'DRAINING') {
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 6]);
+      } else {
+        ctx.strokeStyle = '#10B981';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([]);
+      }
+
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function onMouseDown(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      draggedNode = ecomap.nodes.find(n => {
+        const nx = n.relativeX * canvas.width;
+        const ny = n.relativeY * canvas.height;
+        return Math.hypot(clickX - nx, clickY - ny) <= 35;
+      });
+
+      if (draggedNode) {
+        isDragging = true;
+        selectedNodeId = draggedNode.id;
+        renderCanvas();
+      }
+    }
+
+    function onMouseMove(e) {
+      if (isDragging && draggedNode) {
+        const rect = canvas.getBoundingClientRect();
+        draggedNode.relativeX = (e.clientX - rect.left) / canvas.width;
+        draggedNode.relativeY = (e.clientY - rect.top) / canvas.height;
+        renderCanvas();
+      }
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      draggedNode = null;
+    }
+
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+      if (tabId === 'canvas-tab') {
+        renderCanvas();
+      } else if (tabId === 'analytics-tab') {
+        updateAnalytics();
+      }
+    }
+
+    function applyCircleLayout() {
+      const n = ecomap.nodes.length;
+      ecomap.nodes.forEach((node, idx) => {
+        const angle = (idx / n) * 2 * Math.PI;
+        node.relativeX = 0.5 + 0.35 * Math.cos(angle);
+        node.relativeY = 0.5 + 0.35 * Math.sin(angle);
+      });
+      renderCanvas();
+    }
+
+    function resetZoom() {
+      renderCanvas();
+    }
+
+    function openNodeModal(nodeId = null) {
+      selectedNodeId = nodeId;
+      const modal = document.getElementById('nodeModal');
+      const delBtn = document.getElementById('deleteNodeBtn');
+
+      if (nodeId) {
+        const node = ecomap.nodes.find(n => n.id === nodeId);
+        document.getElementById('modalTitle').innerText = 'Edit Domain Node';
+        document.getElementById('nodeTitle').value = node.title;
+        document.getElementById('nodeCategory').value = node.category;
+        document.getElementById('connType').value = node.type;
+        document.getElementById('flowDir').value = node.flow;
+        document.getElementById('nodeImpact').value = node.impact;
+        delBtn.style.display = 'block';
+      } else {
+        document.getElementById('modalTitle').innerText = 'Add Domain Node';
+        document.getElementById('nodeTitle').value = '';
+        document.getElementById('nodeCategory').value = 'FAMILY';
+        document.getElementById('connType').value = 'STRONG';
+        document.getElementById('flowDir').value = 'BIDIRECTIONAL';
+        document.getElementById('nodeImpact').value = 3;
+        delBtn.style.display = 'none';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeNodeModal() {
+      document.getElementById('nodeModal').classList.remove('active');
+    }
+
+    function saveNode() {
+      const title = document.getElementById('nodeTitle').value.trim() || 'Domain';
+      const category = document.getElementById('nodeCategory').value;
+      const type = document.getElementById('connType').value;
+      const flow = document.getElementById('flowDir').value;
+      const impact = parseInt(document.getElementById('nodeImpact').value) || 3;
+
+      if (selectedNodeId) {
+        const node = ecomap.nodes.find(n => n.id === selectedNodeId);
+        node.title = title;
+        node.category = category;
+        node.type = type;
+        node.flow = flow;
+        node.impact = impact;
+      } else {
+        ecomap.nodes.push({
+          id: Date.now().toString(),
+          title: title,
+          category: category,
+          relativeX: 0.5 + (Math.random() - 0.5) * 0.4,
+          relativeY: 0.5 + (Math.random() - 0.5) * 0.4,
+          impact: impact,
+          type: type,
+          flow: flow
+        });
+      }
+
+      closeNodeModal();
+      renderCanvas();
+      updateAnalytics();
+    }
+
+    function deleteCurrentNode() {
+      if (selectedNodeId) {
+        ecomap.nodes = ecomap.nodes.filter(n => n.id !== selectedNodeId);
+        selectedNodeId = null;
+        closeNodeModal();
+        renderCanvas();
+        updateAnalytics();
+      }
+    }
+
+    function updateMapInfo() {
+      ecomap.clientName = document.getElementById('clientName').value;
+      ecomap.caseId = document.getElementById('caseId').value;
+      ecomap.therapistName = document.getElementById('therapistName').value;
+      ecomap.facilityName = document.getElementById('facilityName').value;
+      ecomap.presentingContext = document.getElementById('presentingContext').value;
+      ecomap.clinicalImpressions = document.getElementById('clinicalImpressions').value;
+      ecomap.recommendedInterventions = document.getElementById('recommendedInterventions').value;
+    }
+
+    function updateAnalytics() {
+      const total = ecomap.nodes.length;
+      const nurturing = ecomap.nodes.filter(n => n.type === 'STRONG' || n.type === 'GIVING' || n.type === 'RECIPROCAL').length;
+      const stressful = ecomap.nodes.filter(n => n.type === 'STRESSFUL' || n.type === 'DRAINING').length;
+      const tenuous = ecomap.nodes.filter(n => n.type === 'TENUOUS').length;
+
+      document.getElementById('totalDomainsCount').innerText = total;
+      document.getElementById('nurturingCount').innerText = nurturing;
+      document.getElementById('stressfulCount').innerText = stressful;
+      document.getElementById('tenuousCount').innerText = tenuous;
+
+      const nutPercent = total > 0 ? (nurturing / total) * 100 : 50;
+      document.getElementById('nurturingBar').style.width = nutPercent + '%';
+      document.getElementById('stressfulBar').style.width = (100 - nutPercent) + '%';
+      document.getElementById('systemicRatioText').innerText = `System is ${Math.round(nutPercent)}% Nurturing vs ${Math.round(100 - nutPercent)}% Stressful / Draining.`;
+    }
+
+    function resetSessionData() {
+      if (confirm("Reset current session? All unsaved data entered in this session will be cleared.")) {
+        ecomap.nodes = [];
+        renderCanvas();
+        updateAnalytics();
+      }
+    }
+
+    function exportPdf() {
+      window.print();
+    }
+
+    window.onload = initCanvas;
+  </script>
+</body>
+</html>
