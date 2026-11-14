@@ -100,7 +100,7 @@ fun ClinicalNotesView(
                     value = facilityName,
                     onValueChange = { facilityName = it; onUpdateClientDetails(clientName, title, caseId, therapistName, facilityName, supervisorName, membersList) },
                     label = { Text("Facility / Clinic Name (Appears on PDF Header)") },
-                    placeholder = { Text("e.g. Beacon Behavioral Health Center") },
+                    placeholder = { Text("e.g. Stonetree Therapy") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("facility_name_input")

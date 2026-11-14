@@ -787,7 +787,7 @@
           <div class="grid-2">
             <div class="form-group">
               <label>Client Name / Identifier</label>
-              <input type="text" id="clientName" class="form-control" value="Sarah Jenkins" oninput="updateMapInfo()">
+              <input type="text" id="clientName" class="form-control" value="Sample" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Case File ID</label>
@@ -795,19 +795,19 @@
             </div>
             <div class="form-group">
               <label>Assessment Title</label>
-              <input type="text" id="mapTitle" class="form-control" value="Comprehensive Systemic & Social Ecology Assessment" oninput="updateMapInfo()">
+              <input type="text" id="mapTitle" class="form-control" value="Ecomap Assessment" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Therapist / Counselor</label>
-              <input type="text" id="therapistName" class="form-control" value="Dr. Alex Taylor, LCSW" oninput="updateMapInfo()">
+              <input type="text" id="therapistName" class="form-control" value="Dr. Alex Taylor, LMFT" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Facility Name</label>
-              <input type="text" id="facilityName" class="form-control" value="Beacon Behavioral Health Center" oninput="updateMapInfo()">
+              <input type="text" id="facilityName" class="form-control" value="Stonetree Therapy" oninput="updateMapInfo()">
             </div>
             <div class="form-group">
               <label>Clinical Supervisor</label>
-              <input type="text" id="supervisorName" class="form-control" value="Dr. Morgan Reed, PsyD" oninput="updateMapInfo()">
+              <input type="text" id="supervisorName" class="form-control" value="CJ Webster LMFT" oninput="updateMapInfo()">
             </div>
           </div>
         </div>
@@ -907,7 +907,7 @@
             <div class="print-confidential-tag">CONFIDENTIAL ASSESSMENT • HEALTHCARE & CASE FILE</div>
           </div>
           <div class="print-header-right">
-            <div class="print-facility-name" id="printFacilityName">Beacon Behavioral Health Center</div>
+            <div class="print-facility-name" id="printFacilityName">Stonetree Therapy</div>
             <div class="print-date" id="printDate">Date: 2026-11-12</div>
           </div>
         </div>
@@ -915,11 +915,11 @@
         <!-- Client & Case Details Box at Top of Page 1 -->
         <div class="print-demographics-card">
           <div class="print-grid-3">
-            <div><span class="print-label">Client Name:</span> <strong id="printClientName">Sarah Jenkins</strong></div>
+            <div><span class="print-label">Client Name:</span> <strong id="printClientName">Sample</strong></div>
             <div><span class="print-label">Case ID:</span> <strong id="printCaseId">CS-2026-8891</strong></div>
-            <div><span class="print-label">Assessment Title:</span> <span id="printAssessmentTitle">Systemic Assessment</span></div>
-            <div><span class="print-label">Clinician / Therapist:</span> <span id="printTherapist">Dr. Alex Taylor, LCSW</span></div>
-            <div><span class="print-label">Clinical Supervisor:</span> <span id="printSupervisor">Dr. Morgan Reed, PsyD</span></div>
+            <div><span class="print-label">Assessment Title:</span> <span id="printAssessmentTitle">Ecomap Assessment</span></div>
+            <div><span class="print-label">Clinician / Therapist:</span> <span id="printTherapist">Dr. Alex Taylor, LMFT</span></div>
+            <div><span class="print-label">Clinical Supervisor:</span> <span id="printSupervisor">CJ Webster LMFT</span></div>
             <div><span class="print-label">Household Size:</span> <span id="printHouseholdCount">3 Member(s)</span></div>
           </div>
         </div>
@@ -981,7 +981,7 @@
             <h3>CLINICAL FORMULATION & SYSTEMIC DOCUMENTATION</h3>
           </div>
           <div class="print-header-right">
-            <div style="font-size: 8pt; color: #E2E8F0;" id="printPage2CaseClient">Case ID: CS-2026-8891 | Client: Sarah Jenkins</div>
+            <div style="font-size: 8pt; color: #E2E8F0;" id="printPage2CaseClient">Case ID: CS-2026-8891 | Client: Sample</div>
           </div>
         </div>
 
@@ -1098,17 +1098,17 @@
     // IN-MEMORY SINGLE SESSION STATE
     // Strictly zero localStorage, sessionStorage, or cookie storage
     let ecomap = {
-      clientName: "Sarah Jenkins",
+      clientName: "Sample",
       caseId: "CS-2026-8891",
-      title: "Comprehensive Systemic & Social Ecology Assessment",
-      therapistName: "Dr. Alex Taylor, LCSW",
-      facilityName: "Beacon Behavioral Health Center",
-      supervisorName: "Dr. Morgan Reed, PsyD",
+      title: "Ecomap Assessment",
+      therapistName: "Dr. Alex Taylor, LMFT",
+      facilityName: "Stonetree Therapy",
+      supervisorName: "CJ Webster LMFT",
       presentingContext: "Client reports high systemic stress stemming from recent employment instability and extended family tensions. Strong nurturing support is derived from local community peer group.",
       clinicalImpressions: "Ecomap reveals significant energetic strain from financial and extended family domains, balanced partially by positive engagement in outpatient therapy and community support.",
       recommendedInterventions: "1. Establish boundary management strategies regarding extended family.\n2. Connect client with vocational support services.\n3. Continue weekly supportive counseling.",
       householdMembers: [
-        { name: "Sarah Jenkins", relation: "Self / Client", age: "34" },
+        { name: "Sample", relation: "Self / Client", age: "34" },
         { name: "Leo Jenkins", relation: "Son", age: "8" },
         { name: "Maya Jenkins", relation: "Daughter", age: "5" }
       ],
@@ -1776,11 +1776,11 @@
 
     function syncPrintData() {
       // Page 1 Header & Demographics (moved to Page 1 to maximize space efficiency)
-      document.getElementById('printFacilityName').innerText = ecomap.facilityName || 'Clinical Behavioral Health Center';
+      document.getElementById('printFacilityName').innerText = ecomap.facilityName || 'Stonetree Therapy';
       document.getElementById('printDate').innerText = 'Date: ' + new Date().toLocaleDateString();
       document.getElementById('printClientName').innerText = ecomap.clientName || 'N/A';
       document.getElementById('printCaseId').innerText = ecomap.caseId || 'N/A';
-      document.getElementById('printAssessmentTitle').innerText = ecomap.title || 'Systemic Assessment';
+      document.getElementById('printAssessmentTitle').innerText = ecomap.title || 'Ecomap Assessment';
       document.getElementById('printTherapist').innerText = ecomap.therapistName || 'N/A';
       document.getElementById('printSupervisor').innerText = ecomap.supervisorName || 'N/A';
       document.getElementById('printHouseholdCount').innerText = `${ecomap.householdMembers.length} Member(s)`;
